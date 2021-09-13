@@ -6,9 +6,6 @@
 /**
  * @param {Object} {}
  *   - @param {mongoose.Model()} GoogleAuth (optional)
- *   - @param {mongoose.Model()} Identity (optional)
- *   - @param {mongoose.Model()} Registry (optional)
- *   - @param {mongoose.Model()} Session (optional)
  *   - @param {mongoose} mongoose (optional)
  *   - @param {String} modelName (optional)
  *   - @param {Object} env (optional)
@@ -17,13 +14,12 @@
  * @param {Object} RegistrySettings (optional)
  * @param {Object} SessionSettings (optional)
  */
- module.exports = ({ GoogleAuth, Identity, Registry, Session, mongoose, modelName, env }, appName = 'this app', IdentitySettings, RegistrySettings, SessionSettings) => {
+ module.exports = ({ GoogleAuth, mongoose, modelName, env }, appName = 'this app', IdentitySettings, RegistrySettings, SessionSettings) => {
   GoogleAuth = GoogleAuth || require('../models/google-auth')({ mongoose, modelName, env }).GoogleAuth
+  const { Registry } = require('../models/google-auth-registry')({ GoogleAuth, mongoose, modelName, env }, RegistrySettings)
   const { loginByGoogleOffline, loginByGoogle } = require('../lib/login-by-google')({ env })
 
-
   const { Identity } = require('v4ex-api-identity/models/all-identity')(IdentitySettings || {})
-  const { Registry } = require('v4ex-api-register/models/registry')(RegistrySettings || {})
   const { Session } = require('v4ex-api-login/models/session')(SessionSettings || {})
 
   const chalk = require('chalk')
@@ -52,6 +48,9 @@
            } else if (options.email) {
              findIdentity.email = options.email
              id = options.email
+           } else {
+             console.log(chalk.red(`Must input --username or --email to locate identity.`))
+             return
            }
 
            Identity.findOne(findIdentity)
@@ -62,6 +61,7 @@
                } else {
                  Registry.findOne({ identity })
                          .then(registry => {
+                           
                            const callback = (err, session) => {
                              if (err) {
                                handleError(err)
@@ -78,17 +78,16 @@
                            const rl = readline.createInterface({ input: process.stdin, output: process.stdout })
                            rl.question('Enter the code from that page here: ', (authCode) => {
                              rl.close()
-                             loginByGoogle(GoogleAuth, Session, identity, registry, authCode, publicKey, callback)
+                             loginByGoogle(GoogleAuth, Registry, Session, identity, registry, authCode, publicKey, callback)
                            })
 
                          })
                          .catch(err => handleError(err))
                }
 
-           })
-           .catch(err => handleError(err))
+             })
+             .catch(err => handleError(err))
 
-           
          })
 
 }
