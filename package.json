@@ -1,0 +1,26 @@
+{
+  "name": "v4ex-api-login-by-google",
+  "version": "1.0.0-alpha",
+  "description": "V4EX API System: Login by Google microservice.",
+  "repository": "github:v4ex/v4ex-api-login-by-google",
+  "author": "V4EX Inc. <v4ex-api-login-by-google@v4ex.com> (https://v4ex.com/)",
+  "contributors": [
+    "Xuwei Li <v4ex-api-login-by-google@xuwei.li> (https://xuwei.li/)"
+  ],
+  "license": "GPL-3.0",
+  "main": "index.js",
+  "bin": {
+    "v4ex-api-identity": "./cli.js"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^8.2.0",
+    "dotenv": "^10.0.0",
+    "google-auth-library": "^7.9.1",
+    "mongoose": "^6.0.5",
+    "v4ex-api-core": "github:v4ex/v4ex-api-core",
+    "v4ex-api-identity": "github:v4ex/v4ex-api-identity",
+    "v4ex-api-login": "github:v4ex/v4ex-api-login",
+    "v4ex-api-register": "github:v4ex/v4ex-api-register"
+  }
+}
